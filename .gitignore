@@ -21,3 +21,4 @@ patches/rejected/**
 *.log
 *.sql
 *.sql.gz
+dist/

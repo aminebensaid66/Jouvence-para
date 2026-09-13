@@ -9,19 +9,32 @@ permissions:
   contents: read
 
 jobs:
-  php-syntax:
+  quality:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.3"
-      - name: Validate PHP syntax
-        run: find wordpress -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          extensions: zip
 
-  compose:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+      - name: Run fast repository checks
+        run: make check
+
       - name: Validate Compose configuration
-        run: docker compose config --quiet
+        run: make compose-config
+
+      - name: Verify reproducible release artifacts
+        run: make verify-build
+
+      - name: Build release artifacts
+        run: make build
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: jouvence-para-${{ github.sha }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7

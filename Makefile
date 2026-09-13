@@ -1,4 +1,4 @@
-.PHONY: check lint-php check-style check-json check-secrets test-unit test-integration test-e2e test-fast compose-config
+.PHONY: check lint-php check-style check-json check-secrets test-unit test-integration test-e2e test-fast compose-config build verify-build
 
 check: lint-php check-style check-json check-secrets test-unit test-integration
 
@@ -27,3 +27,9 @@ test-fast: test-unit test-integration
 
 compose-config:
 	@docker compose config --quiet
+
+build:
+	@scripts/build-release.sh
+
+verify-build:
+	@scripts/verify-reproducible-build.sh
