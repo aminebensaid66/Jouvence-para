@@ -67,6 +67,7 @@ add_action(
             new JouvencePara\Core\Audit\AuditModule(),
             new JouvencePara\Core\Media\MediaModule(),
             new JouvencePara\Core\Observability\ObservabilityModule(),
+            new JouvencePara\Core\Privacy\ConsentModule(),
         ]))->boot();
     }
 );
