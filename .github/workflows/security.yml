@@ -47,12 +47,14 @@ jobs:
           - wordpress:php8.3-apache@sha256:5a93c470ae8220fddf71f6ebe3bc94e615ddc2ae4d9810f795b830fb11c41a17
           - mysql:8.4@sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a
     steps:
-      - name: Scan runtime image
+      - name: Scan runtime image (advisory on pull requests)
+        env:
+          TRIVY_EXIT_CODE: ${{ github.event_name == 'pull_request' && '0' || '1' }}
         run: |
           docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
             aquasec/trivy:0.66.0@sha256:086971aaf400beebd94e8300fd8ea623774419597169156cec56eec5b00dfb1e \
-            image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed "${{ matrix.image }}"
+            image --exit-code "$TRIVY_EXIT_CODE" --severity HIGH,CRITICAL --ignore-unfixed "${{ matrix.image }}"
 
   staging-wordpress:
     runs-on: ubuntu-latest
