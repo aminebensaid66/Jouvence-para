@@ -1,0 +1,46 @@
+/*
+Theme Name: Jouvence Para
+Description: Accessible presentation theme for the Jouvence Para WooCommerce store.
+Version: 0.1.0
+Requires at least: 6.6
+Requires PHP: 8.1
+Text Domain: jouvence-para
+*/
+
+:root {
+    --jp-color-ink: #18332f;
+    --jp-color-background: #fbfaf5;
+    --jp-color-surface: #ffffff;
+    --jp-color-accent: #db6b49;
+    --jp-content-width: 75rem;
+    --jp-space: clamp(1rem, 3vw, 2rem);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { color-scheme: light; }
+body {
+    margin: 0;
+    color: var(--jp-color-ink);
+    background: var(--jp-color-background);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.6;
+}
+a { color: inherit; }
+img { max-width: 100%; height: auto; }
+.jp-container { width: min(100% - (2 * var(--jp-space)), var(--jp-content-width)); margin-inline: auto; }
+.site-header, .site-footer { padding-block: 1.25rem; background: var(--jp-color-surface); }
+.site-main { min-height: 65vh; padding-block: clamp(2rem, 6vw, 5rem); }
+.site-brand { font-size: 1.25rem; font-weight: 700; text-decoration: none; }
+.screen-reader-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+.screen-reader-text:focus { position: fixed; inset: 1rem auto auto 1rem; width: auto; height: auto; padding: .75rem; clip: auto; background: #fff; z-index: 100000; }
+:focus-visible { outline: 3px solid var(--jp-color-accent); outline-offset: 3px; }

@@ -1,0 +1,18 @@
+{
+  "name": "jouvence-para/store",
+  "description": "Jouvence Para WordPress and WooCommerce application code",
+  "type": "project",
+  "license": "proprietary",
+  "require": {
+    "php": ">=8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "JouvencePara\\Core\\": "wordpress/wp-content/plugins/jouvence-para-core/src/"
+    }
+  },
+  "scripts": {
+    "lint": "find wordpress -type f -name '*.php' -print0 | xargs -0 -n1 php -l",
+    "check": ["@lint"]
+  }
+}
