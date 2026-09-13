@@ -13,7 +13,7 @@ It covers:
 - optional staging WordPress/WooCommerce/plugin/theme vulnerability scanning through WPScan when `JP_SECURITY_SCAN_URL` and `WPSCAN_API_TOKEN` are configured;
 - GitHub Actions and Composer update monitoring through Dependabot.
 
-High/critical Trivy findings and any vulnerability record returned by WPScan fail the workflow, creating an actionable failed check on the repository.
+High/critical repository findings and any vulnerability record returned by WPScan fail the workflow. Runtime-image findings are advisory on pull requests because official base images can contain upstream findings that application changes cannot repair; the same scans fail scheduled, manual, and `main` runs so they still create an actionable maintenance signal.
 
 ## Required staging configuration
 
