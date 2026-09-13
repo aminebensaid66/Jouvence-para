@@ -16,6 +16,7 @@ if (! defined('ABSPATH')) {
 }
 
 define('JOUVENCE_PARA_CORE_VERSION', '0.1.0');
+define('JOUVENCE_PARA_CORE_SCHEMA_VERSION', '1');
 define('JOUVENCE_PARA_CORE_FILE', __FILE__);
 define('JOUVENCE_PARA_CORE_PATH', plugin_dir_path(__FILE__));
 
@@ -32,6 +33,15 @@ spl_autoload_register(
             require_once $path;
         }
     }
+);
+
+register_activation_hook(
+    JOUVENCE_PARA_CORE_FILE,
+    [JouvencePara\Core\Bootstrap\Lifecycle::class, 'activate']
+);
+register_deactivation_hook(
+    JOUVENCE_PARA_CORE_FILE,
+    [JouvencePara\Core\Bootstrap\Lifecycle::class, 'deactivate']
 );
 
 (new JouvencePara\Core\Support\Compatibility())->register();
@@ -51,6 +61,9 @@ add_action(
             return;
         }
 
-        (new JouvencePara\Core\Bootstrap\Plugin())->boot();
+        (new JouvencePara\Core\Bootstrap\Plugin([
+            new JouvencePara\Core\Infrastructure\Database\DatabaseModule(),
+            new JouvencePara\Core\Media\MediaModule(),
+        ]))->boot();
     }
 );
