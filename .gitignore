@@ -13,8 +13,11 @@ wordpress/wp-content/uploads/
 wordpress/wp-content/cache/
 wordpress/wp-content/upgrade/
 wordpress/wp-content/backup*/
-patches/incoming/*.patch
-patches/rejected/*.patch
+patches/*.patch
+patches/incoming/**
+patches/rejected/**
+!patches/incoming/.gitkeep
+!patches/rejected/.gitkeep
 *.log
 *.sql
 *.sql.gz

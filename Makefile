@@ -1,6 +1,6 @@
-.PHONY: check lint-php check-style check-json test-unit test-integration test-e2e test-fast compose-config
+.PHONY: check lint-php check-style check-json check-secrets test-unit test-integration test-e2e test-fast compose-config
 
-check: lint-php check-style check-json test-unit test-integration
+check: lint-php check-style check-json check-secrets test-unit test-integration
 
 lint-php:
 	@scripts/lint-php.sh
@@ -10,6 +10,9 @@ check-style:
 
 check-json:
 	@php scripts/check-json.php
+
+check-secrets:
+	@php scripts/check-secrets.php
 
 test-unit:
 	@php tests/run.php unit

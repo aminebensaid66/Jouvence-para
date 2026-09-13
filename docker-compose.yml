@@ -29,7 +29,7 @@ services:
       WORDPRESS_DB_NAME: ${JP_DB_NAME:-wordpress}
       WORDPRESS_DB_USER: ${JP_DB_USER:-wordpress}
       WORDPRESS_DB_PASSWORD: ${JP_DB_PASSWORD:-wordpress_dev_password}
-      WORDPRESS_DEBUG: 1
+      WORDPRESS_DEBUG: ${JP_WP_DEBUG:-1}
     volumes:
       - wordpress_data:/var/www/html
       - ./wordpress/wp-content/themes/jouvence-para:/var/www/html/wp-content/themes/jouvence-para
