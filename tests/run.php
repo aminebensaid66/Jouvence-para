@@ -12,6 +12,10 @@ if (! in_array($suite, $allowedSuites, true)) {
     exit(2);
 }
 
+if ($suite === 'integration') {
+    require_once __DIR__ . '/integration/wordpress-stubs.php';
+}
+
 $files = glob(__DIR__ . '/' . $suite . '/*Test.php') ?: [];
 sort($files);
 

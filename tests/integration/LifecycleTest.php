@@ -7,29 +7,6 @@ use JouvencePara\Core\Bootstrap\Lifecycle;
 const JOUVENCE_PARA_CORE_VERSION = '0.1.0-test';
 const JOUVENCE_PARA_CORE_SCHEMA_VERSION = '0';
 
-$GLOBALS['jp_test_options'] = [];
-
-function update_option(string $name, mixed $value, bool $autoload = true): bool
-{
-    $GLOBALS['jp_test_options'][$name] = $value;
-    return true;
-}
-
-function get_option(string $name, mixed $default = false): mixed
-{
-    return $GLOBALS['jp_test_options'][$name] ?? $default;
-}
-
-function add_option(string $name, mixed $value, string $deprecated = '', bool $autoload = true): bool
-{
-    if (array_key_exists($name, $GLOBALS['jp_test_options'])) {
-        return false;
-    }
-
-    $GLOBALS['jp_test_options'][$name] = $value;
-    return true;
-}
-
 require_once __DIR__ . '/../../wordpress/wp-content/plugins/jouvence-para-core/src/Bootstrap/Lifecycle.php';
 
 return [

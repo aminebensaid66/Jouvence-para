@@ -14,7 +14,7 @@ final class Lifecycle
         update_option(self::PLUGIN_VERSION_OPTION, JOUVENCE_PARA_CORE_VERSION, false);
 
         if (get_option(self::SCHEMA_VERSION_OPTION, null) === null) {
-            add_option(self::SCHEMA_VERSION_OPTION, JOUVENCE_PARA_CORE_SCHEMA_VERSION, '', false);
+            add_option(self::SCHEMA_VERSION_OPTION, '0', '', false);
         }
     }
 
