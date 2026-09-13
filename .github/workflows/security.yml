@@ -1,0 +1,82 @@
+name: Security monitoring
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "23 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  repository:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+      - name: Validate Composer metadata
+        run: composer validate --strict --no-check-publish
+      - name: Audit Composer dependencies when locked
+        shell: bash
+        run: |
+          if [[ -f composer.lock ]]; then
+            composer audit --no-interaction
+          else
+            echo "No composer.lock yet; no third-party Composer packages are installed."
+          fi
+      - name: Repository secret hygiene
+        run: php scripts/check-secrets.php
+      - name: Scan repository filesystem
+        run: |
+          docker run --rm \
+            -v "$PWD:/workspace" \
+            aquasec/trivy:0.66.0@sha256:086971aaf400beebd94e8300fd8ea623774419597169156cec56eec5b00dfb1e \
+            fs --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed /workspace
+
+  runtime-images:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image:
+          - wordpress:php8.3-apache@sha256:5a93c470ae8220fddf71f6ebe3bc94e615ddc2ae4d9810f795b830fb11c41a17
+          - mysql:8.4@sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a
+    steps:
+      - name: Scan runtime image (advisory on pull requests)
+        env:
+          TRIVY_EXIT_CODE: ${{ github.event_name == 'pull_request' && '0' || '1' }}
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            aquasec/trivy:0.66.0@sha256:086971aaf400beebd94e8300fd8ea623774419597169156cec56eec5b00dfb1e \
+            image --exit-code "$TRIVY_EXIT_CODE" --severity HIGH,CRITICAL --ignore-unfixed "${{ matrix.image }}"
+
+  staging-wordpress:
+    runs-on: ubuntu-latest
+    env:
+      JP_SECURITY_SCAN_URL: ${{ vars.JP_SECURITY_SCAN_URL }}
+      WPSCAN_API_TOKEN: ${{ secrets.WPSCAN_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        if: ${{ env.JP_SECURITY_SCAN_URL != '' && env.WPSCAN_API_TOKEN != '' }}
+      - name: Scan staging WordPress inventory
+        if: ${{ env.JP_SECURITY_SCAN_URL != '' && env.WPSCAN_API_TOKEN != '' }}
+        run: |
+          docker run --rm \
+            -v "$RUNNER_TEMP:/scan" \
+            wpscanteam/wpscan:latest@sha256:07d1f5a2e64e575fe4ce1b7d9d4f8d2df33471c0254323b600fb61f770d8924e \
+            --url "$JP_SECURITY_SCAN_URL" \
+            --api-token "$WPSCAN_API_TOKEN" \
+            --format json \
+            --output /scan/wpscan.json
+      - name: Fail on reported WordPress vulnerabilities
+        if: ${{ env.JP_SECURITY_SCAN_URL != '' && env.WPSCAN_API_TOKEN != '' }}
+        run: php scripts/check-wpscan-report.php "$RUNNER_TEMP/wpscan.json"
+      - name: Explain skipped staging scan
+        if: ${{ env.JP_SECURITY_SCAN_URL == '' || env.WPSCAN_API_TOKEN == '' }}
+        run: echo "Staging WPScan is not configured; skipping the optional scan."

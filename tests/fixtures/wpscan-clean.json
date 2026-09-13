@@ -1,0 +1,5 @@
+{
+  "version": {"number": "6.6", "vulnerabilities": []},
+  "plugins": {"woocommerce": {"version": {"number": "9.0"}, "vulnerabilities": []}},
+  "themes": {"jouvence-para": {"vulnerabilities": []}}
+}
