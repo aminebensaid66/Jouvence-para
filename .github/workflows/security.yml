@@ -16,7 +16,7 @@ jobs:
   repository:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.3"
@@ -62,7 +62,7 @@ jobs:
       JP_SECURITY_SCAN_URL: ${{ vars.JP_SECURITY_SCAN_URL }}
       WPSCAN_API_TOKEN: ${{ secrets.WPSCAN_API_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: ${{ env.JP_SECURITY_SCAN_URL != '' && env.WPSCAN_API_TOKEN != '' }}
       - name: Scan staging WordPress inventory
         if: ${{ env.JP_SECURITY_SCAN_URL != '' && env.WPSCAN_API_TOKEN != '' }}
