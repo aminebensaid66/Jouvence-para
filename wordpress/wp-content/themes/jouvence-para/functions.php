@@ -33,5 +33,18 @@ add_action(
             [],
             wp_get_theme()->get('Version')
         );
+        wp_enqueue_style(
+            'jouvence-para-cookie-consent',
+            get_template_directory_uri() . '/assets/css/cookie-consent.css',
+            ['jouvence-para'],
+            wp_get_theme()->get('Version')
+        );
+        wp_enqueue_script(
+            'jouvence-para-cookie-consent',
+            get_template_directory_uri() . '/assets/js/cookie-consent.js',
+            [],
+            wp_get_theme()->get('Version'),
+            true
+        );
     }
 );
