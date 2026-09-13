@@ -16,7 +16,7 @@ if (! defined('ABSPATH')) {
 }
 
 define('JOUVENCE_PARA_CORE_VERSION', '0.1.0');
-define('JOUVENCE_PARA_CORE_SCHEMA_VERSION', '0');
+define('JOUVENCE_PARA_CORE_SCHEMA_VERSION', '1');
 define('JOUVENCE_PARA_CORE_FILE', __FILE__);
 define('JOUVENCE_PARA_CORE_PATH', plugin_dir_path(__FILE__));
 
@@ -61,6 +61,8 @@ add_action(
             return;
         }
 
-        (new JouvencePara\Core\Bootstrap\Plugin())->boot();
+        (new JouvencePara\Core\Bootstrap\Plugin([
+            new JouvencePara\Core\Infrastructure\Database\DatabaseModule(),
+        ]))->boot();
     }
 );
