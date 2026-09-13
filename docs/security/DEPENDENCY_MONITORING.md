@@ -23,6 +23,8 @@ The staging scan is intentionally skipped when those values are absent; producti
 
 Scanner and runtime image references are digest-pinned so a previously reviewed workflow cannot silently execute different container contents. Dependabot does not update Docker references in workflow shell commands, so review and refresh these digests deliberately during the regular dependency-maintenance cycle.
 
+The local database runs the MySQL 8.4 LTS line. Its digest must be updated in both `docker-compose.yml` and the security workflow together after a clean vulnerability scan and compatibility smoke test.
+
 ## Update process
 
 1. A dependency alert or failed scheduled scan creates an engineering action.
