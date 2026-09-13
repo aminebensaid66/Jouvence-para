@@ -8,18 +8,21 @@ use JouvencePara\Core\Contracts\Module;
 
 final class Plugin
 {
-    /** @var list<Module> */
-    private array $modules;
+    private ModuleRegistry $modules;
 
-    public function __construct(?array $modules = null)
+    /** @param iterable<Module> $modules */
+    public function __construct(iterable $modules = [])
     {
-        $this->modules = $modules ?? [];
+        $this->modules = new ModuleRegistry($modules);
+    }
+
+    public function addModule(Module $module): void
+    {
+        $this->modules->add($module);
     }
 
     public function boot(): void
     {
-        foreach ($this->modules as $module) {
-            $module->register();
-        }
+        $this->modules->registerAll();
     }
 }
