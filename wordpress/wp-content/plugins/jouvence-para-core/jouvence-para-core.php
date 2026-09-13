@@ -63,6 +63,7 @@ add_action(
 
         (new JouvencePara\Core\Bootstrap\Plugin([
             new JouvencePara\Core\Infrastructure\Database\DatabaseModule(),
+            new JouvencePara\Core\Admin\MerchandisingModule(),
             new JouvencePara\Core\Media\MediaModule(),
             new JouvencePara\Core\Observability\ObservabilityModule(),
         ]))->boot();
