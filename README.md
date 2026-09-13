@@ -33,6 +33,12 @@ docker compose down
 
 Persistent database and WordPress runtime data live in Docker volumes. Only the custom theme and plugin are versioned.
 
+## Repository workflow
+
+- Branching and releases: `docs/workflow/BRANCHING_AND_RELEASES.md`
+- Repository ownership audit: `docs/architecture/REPOSITORY_AUDIT.md`
+- One issue per patch/PR unless an approved plan explicitly groups changes.
+
 ## Checks
 
 ```bash
