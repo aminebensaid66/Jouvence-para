@@ -1,8 +1,8 @@
 services:
   database:
-    image: mysql:8.0
+    image: mysql:8.4@sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a
     restart: unless-stopped
-    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:
       MYSQL_DATABASE: ${JP_DB_NAME:-wordpress}
       MYSQL_USER: ${JP_DB_USER:-wordpress}
