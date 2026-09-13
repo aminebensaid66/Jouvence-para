@@ -1,9 +1,15 @@
-.PHONY: check lint-php compose-config
+.PHONY: check lint-php check-style check-json compose-config
 
-check: lint-php compose-config
+check: lint-php check-style check-json
 
 lint-php:
-	@find wordpress -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+	@scripts/lint-php.sh
+
+check-style:
+	@php scripts/check-style.php
+
+check-json:
+	@php scripts/check-json.php
 
 compose-config:
 	@docker compose config --quiet

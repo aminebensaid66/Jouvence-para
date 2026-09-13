@@ -12,7 +12,13 @@
     }
   },
   "scripts": {
-    "lint": "find wordpress -type f -name '*.php' -print0 | xargs -0 -n1 php -l",
-    "check": ["@lint"]
+    "lint": "scripts/lint-php.sh",
+    "check-style": "php scripts/check-style.php",
+    "check-json": "php scripts/check-json.php",
+    "check": [
+      "@lint",
+      "@check-style",
+      "@check-json"
+    ]
   }
 }
