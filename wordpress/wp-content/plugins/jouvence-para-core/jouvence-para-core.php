@@ -74,6 +74,7 @@ add_action(
             new JouvencePara\Core\Inventory\InventoryModule(),
             new JouvencePara\Core\I18n\I18nModule(),
             new JouvencePara\Core\Content\ContentReviewModule(),
+            new JouvencePara\Core\Discovery\FacetedFilterModule(),
             new JouvencePara\Core\Observability\ObservabilityModule(),
             new JouvencePara\Core\Privacy\ConsentModule(),
             new JouvencePara\Core\Security\SecurityModule(),
