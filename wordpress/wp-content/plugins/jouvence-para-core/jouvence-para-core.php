@@ -66,6 +66,7 @@ add_action(
             new JouvencePara\Core\Catalog\CatalogModule(),
             new JouvencePara\Core\Catalog\CatalogTaxonomyModule(),
             new JouvencePara\Core\Catalog\CatalogCsvModule(),
+            new JouvencePara\Core\Catalog\ProductAdminModule(),
             new JouvencePara\Core\Admin\MerchandisingModule(),
             new JouvencePara\Core\Admin\StaffRolesModule(),
             new JouvencePara\Core\Audit\AuditModule(),
