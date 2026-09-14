@@ -179,7 +179,7 @@ if (! function_exists('get_posts')) {
     }
 }
 if (! function_exists('taxonomy_exists')) {
-    function taxonomy_exists(string $taxonomy): bool { return $taxonomy === 'jp_brand'; }
+    function taxonomy_exists(string $taxonomy): bool { return in_array($taxonomy, ['jp_brand', 'jp_need', 'product_cat'], true); }
 }
 if (! function_exists('has_term')) {
     function has_term(string $term, string $taxonomy, int $productId): bool
