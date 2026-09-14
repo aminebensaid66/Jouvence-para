@@ -64,3 +64,25 @@ add_action(
     },
     4
 );
+
+add_action(
+    'woocommerce_single_product_summary',
+    static function (): void {
+        global $product;
+        if (! $product instanceof \WC_Product) {
+            return;
+        }
+        $url = (string) apply_filters('jouvence_para_whatsapp_url', '', $product);
+        if ($url === '') {
+            return;
+        }
+        $hours = (string) apply_filters('jouvence_para_whatsapp_hours', '');
+        echo '<div class="jp-whatsapp-advice">';
+        echo '<a class="jp-button jp-button--secondary" href="' . esc_url($url) . '" rel="noopener noreferrer">' . esc_html__('Demander conseil sur WhatsApp', 'jouvence-para') . '</a>';
+        if ($hours !== '') {
+            echo '<p class="jp-whatsapp-advice__hours">' . esc_html($hours) . '</p>';
+        }
+        echo '</div>';
+    },
+    35
+);

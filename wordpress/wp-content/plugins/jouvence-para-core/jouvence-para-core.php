@@ -77,6 +77,7 @@ add_action(
             new JouvencePara\Core\Observability\ObservabilityModule(),
             new JouvencePara\Core\Privacy\ConsentModule(),
             new JouvencePara\Core\Security\SecurityModule(),
+            new JouvencePara\Core\Support\WhatsAppModule(),
         ]))->boot();
     }
 );
