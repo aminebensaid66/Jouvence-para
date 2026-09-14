@@ -48,3 +48,19 @@ add_action(
         );
     }
 );
+
+add_action(
+    'woocommerce_single_product_summary',
+    static function (): void {
+        global $product;
+        if (! $product instanceof \WC_Product) {
+            return;
+        }
+        $brands = get_the_terms($product->get_id(), 'jp_brand');
+        if (! is_array($brands) || ! isset($brands[0])) {
+            return;
+        }
+        echo '<p class="jp-product-detail__brand">' . esc_html($brands[0]->name) . '</p>';
+    },
+    4
+);
