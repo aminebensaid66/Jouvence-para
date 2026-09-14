@@ -54,3 +54,24 @@ img { max-width: 100%; height: auto; }
 .jp-merchandising-card__content h3 { margin-block: 0 .5rem; font-size: clamp(1.25rem, 3vw, 1.75rem); line-height: 1.2; }
 .jp-button { display: inline-flex; min-height: 2.75rem; align-items: center; justify-content: center; margin-block-start: .75rem; padding: .6rem 1rem; border-radius: .7rem; background: var(--jp-color-ink); color: #fff; font-weight: 700; text-decoration: none; }
 .jp-button:hover { text-decoration: underline; text-underline-offset: .2em; }
+
+/* JP-DISC-001 product grid */
+.jp-shop__header { max-width: 54rem; margin-block-end: var(--jp-space); }
+.jp-product-grid.products { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--jp-space); margin: 0; padding: 0; list-style: none; }
+.jp-product-grid.products::before, .jp-product-grid.products::after { display: none; }
+.jp-product-card.product { float: none; width: auto; margin: 0; }
+.jp-product-card__inner { height: 100%; display: flex; flex-direction: column; overflow: hidden; border: 1px solid color-mix(in srgb, var(--jp-color-ink) 14%, transparent); border-radius: 1rem; background: var(--jp-color-surface); }
+.jp-product-card__media { display: block; background: #fff; }
+.jp-product-card__image { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: contain; }
+.jp-product-card__body { display: flex; flex: 1; flex-direction: column; gap: .55rem; padding: clamp(.8rem, 2vw, 1.2rem); }
+.jp-product-card__brand { margin: 0; font-size: .8rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.jp-product-card__title { margin: 0; font-size: clamp(1rem, 2.2vw, 1.2rem); line-height: 1.3; }
+.jp-product-card__title a { text-decoration: none; }
+.jp-product-card__title a:hover { text-decoration: underline; text-underline-offset: .2em; }
+.jp-product-card__price { font-weight: 700; }
+.jp-product-card__availability { margin: 0; font-size: .9rem; }
+.jp-product-card__availability[data-status="out-of-stock"] { font-weight: 700; }
+.jp-product-card__body .jp-button { margin-block-start: auto; }
+.jp-button--secondary { background: transparent; color: var(--jp-color-ink); border: 1px solid currentColor; }
+@media (min-width: 42rem) { .jp-product-grid.products { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 68rem) { .jp-product-grid.products { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
