@@ -112,3 +112,43 @@ add_action(
     },
     34
 );
+
+add_action(
+    'woocommerce_before_shop_loop',
+    static function (): void {
+        $groups = apply_filters('jouvence_para_facets', []);
+        if (! is_array($groups) || $groups === []) {
+            return;
+        }
+        echo '<form class="jp-facets" method="get" aria-label="' . esc_attr__('Filtres produits', 'jouvence-para') . '">';
+        $activeChips = [];
+        foreach ($groups as $group) {
+            $key = (string) ($group['key'] ?? '');
+            $options = is_array($group['options'] ?? null) ? $group['options'] : [];
+            if ($key === '' || $options === []) { continue; }
+            echo '<fieldset><legend>' . esc_html((string) ($group['label'] ?? $key)) . '</legend>';
+            foreach ($options as $option) {
+                $slug = (string) ($option['slug'] ?? '');
+                if ($slug === '') { continue; }
+                $active = (bool) ($option['active'] ?? false);
+                echo '<label><input type="checkbox" name="jp_filter_' . esc_attr($key) . '[]" value="' . esc_attr($slug) . '" ' . checked($active, true, false) . '> ';
+                echo esc_html((string) ($option['name'] ?? $slug)) . ' <span aria-label="' . esc_attr__('nombre de produits', 'jouvence-para') . '">(' . esc_html((string) (int) ($option['count'] ?? 0)) . ')</span></label>';
+                if ($active) {
+                    $param = 'jp_filter_' . $key;
+                    $rawValues = isset($_GET[$param]) ? (array) wp_unslash($_GET[$param]) : [];
+                    $remaining = array_values(array_filter(array_map('sanitize_key', $rawValues), static fn (string $value): bool => $value !== $slug));
+                    $clearUrl = $remaining === [] ? remove_query_arg($param) : add_query_arg($param, $remaining);
+                    $activeChips[] = '<li><a href="' . esc_url($clearUrl) . '" aria-label="' . esc_attr(sprintf(__('Retirer le filtre %s', 'jouvence-para'), (string) ($option['name'] ?? $slug))) . '">' . esc_html((string) ($option['name'] ?? $slug)) . ' ×</a></li>';
+                }
+            }
+            echo '</fieldset>';
+        }
+        if ($activeChips !== []) {
+            echo '<div class="jp-active-filters" aria-live="polite"><strong>' . esc_html__('Filtres actifs', 'jouvence-para') . '</strong><ul>' . wp_kses_post(implode('', $activeChips)) . '</ul></div>';
+        }
+        echo '<div class="jp-facets__actions"><button class="jp-button" type="submit">' . esc_html__('Appliquer les filtres', 'jouvence-para') . '</button>';
+        echo '<a href="' . esc_url(remove_query_arg(array_map(static fn ($k) => 'jp_filter_' . $k, array_keys(\JouvencePara\Core\Discovery\FilterState::TAXONOMIES)))) . '">' . esc_html__('Effacer tous les filtres', 'jouvence-para') . '</a></div>';
+        echo '</form>';
+    },
+    5
+);
