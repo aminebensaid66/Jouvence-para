@@ -98,3 +98,7 @@ img { max-width: 100%; height: auto; }
 .jp-whatsapp-link { font-weight: 700; }
 .jp-whatsapp-advice { margin-block: 1rem; padding: 1rem; border: 1px solid color-mix(in srgb, var(--jp-color-ink) 15%, transparent); border-radius: .8rem; }
 .jp-whatsapp-advice__hours { margin: .5rem 0 0; font-size: .9rem; }
+
+/* JP-PDP-002 */
+.jp-delivery-advice { margin-block: 1rem; padding: 1rem; border-radius: .8rem; background: color-mix(in srgb, var(--jp-color-surface) 88%, var(--jp-color-background)); }
+.jp-delivery-advice p { margin-block: .4rem; }
