@@ -102,3 +102,15 @@ img { max-width: 100%; height: auto; }
 /* JP-PDP-002 */
 .jp-delivery-advice { margin-block: 1rem; padding: 1rem; border-radius: .8rem; background: color-mix(in srgb, var(--jp-color-surface) 88%, var(--jp-color-background)); }
 .jp-delivery-advice p { margin-block: .4rem; }
+
+/* JP-DISC-002 facets */
+.jp-facets { display: grid; gap: 1rem; margin-block: 0 1.5rem; padding: 1rem; border: 1px solid color-mix(in srgb, var(--jp-color-ink) 14%, transparent); border-radius: 1rem; }
+.jp-facets fieldset { min-width: 0; margin: 0; padding: .75rem; border: 0; }
+.jp-facets legend { font-weight: 800; }
+.jp-facets label { display: flex; gap: .45rem; align-items: center; min-height: 2.25rem; }
+.jp-facets input { inline-size: 1.15rem; block-size: 1.15rem; }
+.jp-facets__actions { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+@media (min-width: 48rem) { .jp-facets { grid-template-columns: repeat(3, minmax(0, 1fr)); } .jp-facets__actions { grid-column: 1 / -1; } }
+.jp-active-filters { grid-column: 1 / -1; }
+.jp-active-filters ul { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0 0; padding: 0; list-style: none; }
+.jp-active-filters a { display: inline-flex; min-height: 2.25rem; align-items: center; padding: .35rem .65rem; border: 1px solid currentColor; border-radius: 999px; text-decoration: none; }
