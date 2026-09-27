@@ -76,6 +76,7 @@ add_action(
             new JouvencePara\Core\Content\ContentReviewModule(),
             new JouvencePara\Core\Discovery\FacetedFilterModule(),
             new JouvencePara\Core\Discovery\DiscoveryRoutingModule(),
+            new JouvencePara\Core\Geography\GeographyModule(),
             new JouvencePara\Core\Observability\ObservabilityModule(),
             new JouvencePara\Core\Privacy\ConsentModule(),
             new JouvencePara\Core\Security\SecurityModule(),
