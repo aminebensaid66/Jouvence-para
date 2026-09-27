@@ -75,3 +75,21 @@ img { max-width: 100%; height: auto; }
 .jp-button--secondary { background: transparent; color: var(--jp-color-ink); border: 1px solid currentColor; }
 @media (min-width: 42rem) { .jp-product-grid.products { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (min-width: 68rem) { .jp-product-grid.products { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* JP-PDP-001 complete product detail */
+.jp-product-detail__primary { display: grid; gap: clamp(1.5rem, 5vw, 4rem); align-items: start; }
+.jp-product-detail__gallery .woocommerce-product-gallery { width: 100%; float: none; }
+.jp-product-detail__summary.summary { width: auto; float: none; margin: 0; }
+.jp-product-detail__brand { margin: 0 0 .4rem; font-size: .9rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.jp-product-detail__summary .price { font-size: clamp(1.3rem, 3vw, 1.7rem); font-weight: 800; }
+.jp-product-detail__summary .stock { font-weight: 700; }
+.jp-product-detail__summary form.cart { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; }
+.jp-product-detail__summary .quantity input { min-height: 2.75rem; max-width: 6rem; }
+.jp-product-detail__summary button.single_add_to_cart_button { min-height: 2.75rem; padding: .65rem 1rem; border: 0; border-radius: .7rem; background: var(--jp-color-ink); color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
+.jp-product-detail__details { margin-block-start: clamp(2rem, 6vw, 4rem); }
+.jp-product-detail__details .woocommerce-tabs ul.tabs { display: flex; flex-wrap: wrap; gap: .5rem; padding: 0; }
+.jp-product-detail__details .woocommerce-tabs ul.tabs li { margin: 0; }
+.jp-product-detail__details table { width: 100%; border-collapse: collapse; }
+.jp-product-detail__details th, .jp-product-detail__details td { padding: .65rem; border-bottom: 1px solid color-mix(in srgb, var(--jp-color-ink) 14%, transparent); text-align: start; }
+@media (min-width: 52rem) { .jp-product-detail__primary { grid-template-columns: minmax(0, 1.05fr) minmax(20rem, .95fr); } }
+@media (prefers-reduced-motion: reduce) { .woocommerce-product-gallery * { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
