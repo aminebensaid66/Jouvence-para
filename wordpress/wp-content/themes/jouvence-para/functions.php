@@ -121,6 +121,7 @@ add_action(
             return;
         }
         echo '<form class="jp-facets" method="get" aria-label="' . esc_attr__('Filtres produits', 'jouvence-para') . '">';
+        if (isset($_GET['orderby']) && sanitize_key((string) wp_unslash($_GET['orderby'])) !== '') { echo '<input type="hidden" name="orderby" value="' . esc_attr(sanitize_key((string) wp_unslash($_GET['orderby']))) . '">'; }
         $activeChips = [];
         foreach ($groups as $group) {
             $key = (string) ($group['key'] ?? '');
