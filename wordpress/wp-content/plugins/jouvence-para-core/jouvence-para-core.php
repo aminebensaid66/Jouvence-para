@@ -71,6 +71,7 @@ add_action(
             new JouvencePara\Core\Admin\StaffRolesModule(),
             new JouvencePara\Core\Audit\AuditModule(),
             new JouvencePara\Core\Media\MediaModule(),
+            new JouvencePara\Core\Inventory\InventoryModule(),
             new JouvencePara\Core\Observability\ObservabilityModule(),
             new JouvencePara\Core\Privacy\ConsentModule(),
             new JouvencePara\Core\Security\SecurityModule(),
