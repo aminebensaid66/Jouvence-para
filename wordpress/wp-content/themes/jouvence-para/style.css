@@ -54,3 +54,63 @@ img { max-width: 100%; height: auto; }
 .jp-merchandising-card__content h3 { margin-block: 0 .5rem; font-size: clamp(1.25rem, 3vw, 1.75rem); line-height: 1.2; }
 .jp-button { display: inline-flex; min-height: 2.75rem; align-items: center; justify-content: center; margin-block-start: .75rem; padding: .6rem 1rem; border-radius: .7rem; background: var(--jp-color-ink); color: #fff; font-weight: 700; text-decoration: none; }
 .jp-button:hover { text-decoration: underline; text-underline-offset: .2em; }
+
+/* JP-DISC-001 product grid */
+.jp-shop__header { max-width: 54rem; margin-block-end: var(--jp-space); }
+.jp-product-grid.products { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--jp-space); margin: 0; padding: 0; list-style: none; }
+.jp-product-grid.products::before, .jp-product-grid.products::after { display: none; }
+.jp-product-card.product { float: none; width: auto; margin: 0; }
+.jp-product-card__inner { height: 100%; display: flex; flex-direction: column; overflow: hidden; border: 1px solid color-mix(in srgb, var(--jp-color-ink) 14%, transparent); border-radius: 1rem; background: var(--jp-color-surface); }
+.jp-product-card__media { display: block; background: #fff; }
+.jp-product-card__image { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: contain; }
+.jp-product-card__body { display: flex; flex: 1; flex-direction: column; gap: .55rem; padding: clamp(.8rem, 2vw, 1.2rem); }
+.jp-product-card__brand { margin: 0; font-size: .8rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.jp-product-card__title { margin: 0; font-size: clamp(1rem, 2.2vw, 1.2rem); line-height: 1.3; }
+.jp-product-card__title a { text-decoration: none; }
+.jp-product-card__title a:hover { text-decoration: underline; text-underline-offset: .2em; }
+.jp-product-card__price { font-weight: 700; }
+.jp-product-card__availability { margin: 0; font-size: .9rem; }
+.jp-product-card__availability[data-status="out-of-stock"] { font-weight: 700; }
+.jp-product-card__body .jp-button { margin-block-start: auto; }
+.jp-button--secondary { background: transparent; color: var(--jp-color-ink); border: 1px solid currentColor; }
+@media (min-width: 42rem) { .jp-product-grid.products { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 68rem) { .jp-product-grid.products { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* JP-PDP-001 complete product detail */
+.jp-product-detail__primary { display: grid; gap: clamp(1.5rem, 5vw, 4rem); align-items: start; }
+.jp-product-detail__gallery .woocommerce-product-gallery { width: 100%; float: none; }
+.jp-product-detail__summary.summary { width: auto; float: none; margin: 0; }
+.jp-product-detail__brand { margin: 0 0 .4rem; font-size: .9rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.jp-product-detail__summary .price { font-size: clamp(1.3rem, 3vw, 1.7rem); font-weight: 800; }
+.jp-product-detail__summary .stock { font-weight: 700; }
+.jp-product-detail__summary form.cart { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; }
+.jp-product-detail__summary .quantity input { min-height: 2.75rem; max-width: 6rem; }
+.jp-product-detail__summary button.single_add_to_cart_button { min-height: 2.75rem; padding: .65rem 1rem; border: 0; border-radius: .7rem; background: var(--jp-color-ink); color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
+.jp-product-detail__details { margin-block-start: clamp(2rem, 6vw, 4rem); }
+.jp-product-detail__details .woocommerce-tabs ul.tabs { display: flex; flex-wrap: wrap; gap: .5rem; padding: 0; }
+.jp-product-detail__details .woocommerce-tabs ul.tabs li { margin: 0; }
+.jp-product-detail__details table { width: 100%; border-collapse: collapse; }
+.jp-product-detail__details th, .jp-product-detail__details td { padding: .65rem; border-bottom: 1px solid color-mix(in srgb, var(--jp-color-ink) 14%, transparent); text-align: start; }
+@media (min-width: 52rem) { .jp-product-detail__primary { grid-template-columns: minmax(0, 1.05fr) minmax(20rem, .95fr); } }
+@media (prefers-reduced-motion: reduce) { .woocommerce-product-gallery * { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+
+/* JP-WA-001 */
+.jp-whatsapp-link { font-weight: 700; }
+.jp-whatsapp-advice { margin-block: 1rem; padding: 1rem; border: 1px solid color-mix(in srgb, var(--jp-color-ink) 15%, transparent); border-radius: .8rem; }
+.jp-whatsapp-advice__hours { margin: .5rem 0 0; font-size: .9rem; }
+
+/* JP-PDP-002 */
+.jp-delivery-advice { margin-block: 1rem; padding: 1rem; border-radius: .8rem; background: color-mix(in srgb, var(--jp-color-surface) 88%, var(--jp-color-background)); }
+.jp-delivery-advice p { margin-block: .4rem; }
+
+/* JP-DISC-002 facets */
+.jp-facets { display: grid; gap: 1rem; margin-block: 0 1.5rem; padding: 1rem; border: 1px solid color-mix(in srgb, var(--jp-color-ink) 14%, transparent); border-radius: 1rem; }
+.jp-facets fieldset { min-width: 0; margin: 0; padding: .75rem; border: 0; }
+.jp-facets legend { font-weight: 800; }
+.jp-facets label { display: flex; gap: .45rem; align-items: center; min-height: 2.25rem; }
+.jp-facets input { inline-size: 1.15rem; block-size: 1.15rem; }
+.jp-facets__actions { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+@media (min-width: 48rem) { .jp-facets { grid-template-columns: repeat(3, minmax(0, 1fr)); } .jp-facets__actions { grid-column: 1 / -1; } }
+.jp-active-filters { grid-column: 1 / -1; }
+.jp-active-filters ul { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0 0; padding: 0; list-style: none; }
+.jp-active-filters a { display: inline-flex; min-height: 2.25rem; align-items: center; padding: .35rem .65rem; border: 1px solid currentColor; border-radius: 999px; text-decoration: none; }
