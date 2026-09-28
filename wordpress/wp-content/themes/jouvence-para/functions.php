@@ -153,3 +153,38 @@ add_action(
     },
     5
 );
+
+add_filter(
+    'woocommerce_product_upsells_products_heading',
+    static fn (string $heading): string => __('Compléments de la routine', 'jouvence-para')
+);
+
+add_filter(
+    'woocommerce_product_related_products_heading',
+    static fn (string $heading): string => __('Produits similaires', 'jouvence-para')
+);
+
+add_filter(
+    'woocommerce_upsells_orderby',
+    static fn (string $orderby): string => 'menu_order'
+);
+
+add_filter(
+    'woocommerce_upsells_order',
+    static fn (string $order): string => 'asc'
+);
+
+add_filter(
+    'woocommerce_product_related_posts_shuffle',
+    static fn (bool $shuffle): bool => false
+);
+
+add_filter(
+    'woocommerce_output_related_products_args',
+    static function (array $args): array {
+        $args['orderby'] = 'menu_order';
+        $args['order'] = 'asc';
+
+        return $args;
+    }
+);
