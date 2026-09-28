@@ -53,6 +53,56 @@ add_action(
             wp_get_theme()->get('Version'),
             true
         );
+
+        if (function_exists('is_cart') && is_cart()) {
+            wp_enqueue_script(
+                'jouvence-para-cart-count',
+                get_template_directory_uri() . '/assets/js/cart-count.js',
+                ['wp-data'],
+                wp_get_theme()->get('Version'),
+                true
+            );
+        }
+    }
+);
+
+function cart_link_markup(): string
+{
+    if (! function_exists('wc_get_cart_url') || ! function_exists('WC')) {
+        return '';
+    }
+
+    $woocommerce = \WC();
+    $cart = is_object($woocommerce) && isset($woocommerce->cart) ? $woocommerce->cart : null;
+    if (! is_object($cart) || ! is_callable([$cart, 'get_cart_contents_count'])) {
+        return '';
+    }
+
+    $count = max(0, (int) $cart->get_cart_contents_count());
+    $singularLabel = _n('%d article dans le panier', '%d articles dans le panier', 1, 'jouvence-para');
+    $pluralLabel = _n('%d article dans le panier', '%d articles dans le panier', 2, 'jouvence-para');
+    $label = sprintf(_n('%d article dans le panier', '%d articles dans le panier', $count, 'jouvence-para'), $count);
+
+    return sprintf(
+        '<a class="jp-cart-link" href="%1$s"><span>%2$s</span><span class="jp-cart-link__count" aria-live="polite" aria-atomic="true"><span class="jp-cart-link__number" aria-hidden="true">%3$s</span><span class="screen-reader-text jp-cart-link__announcement" data-label-singular="%4$s" data-label-plural="%5$s">%6$s</span></span></a>',
+        esc_url(wc_get_cart_url()),
+        esc_html__('Panier', 'jouvence-para'),
+        esc_html((string) $count),
+        esc_attr($singularLabel),
+        esc_attr($pluralLabel),
+        esc_html($label)
+    );
+}
+
+add_filter(
+    'woocommerce_add_to_cart_fragments',
+    static function (array $fragments): array {
+        $cartLink = cart_link_markup();
+        if ($cartLink !== '') {
+            $fragments['a.jp-cart-link'] = $cartLink;
+        }
+
+        return $fragments;
     }
 );
 
