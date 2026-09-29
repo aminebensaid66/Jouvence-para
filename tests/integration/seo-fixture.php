@@ -62,11 +62,16 @@ namespace {
     function is_home(): bool { return (bool) ($GLOBALS['jp_seo_context']['home'] ?? false); }
     function is_shop(): bool { return (bool) ($GLOBALS['jp_seo_context']['shop'] ?? false); }
     function is_tax(): bool { return (bool) ($GLOBALS['jp_seo_context']['tax'] ?? false); }
+    function is_product_taxonomy(): bool { return is_tax(); }
     function is_category(): bool { return (bool) ($GLOBALS['jp_seo_context']['category'] ?? false); }
     function is_tag(): bool { return (bool) ($GLOBALS['jp_seo_context']['tag'] ?? false); }
     function get_post(?int $id = null): ?WP_Post { return $GLOBALS['jp_seo_context'][$id === null ? 'post' : 'shop_post'] ?? null; }
     function get_the_title(WP_Post $post): string { return $post->post_title; }
-    function get_permalink(mixed $post = null): string { return $GLOBALS['jp_seo_context']['canonical']; }
+    function get_permalink(mixed $post = null): string
+    {
+        $id = $post instanceof WP_Post ? $post->ID : (int) $post;
+        return $GLOBALS['jp_seo_context']['permalinks'][$id] ?? $GLOBALS['jp_seo_context']['canonical'];
+    }
     function post_password_required(WP_Post $post): bool { return $post->post_password !== ''; }
     function wp_get_document_title(): string { return $GLOBALS['jp_seo_context']['title']; }
     function wp_get_canonical_url(): string { return $GLOBALS['jp_seo_context']['canonical']; }
