@@ -16,7 +16,7 @@ if (! defined('ABSPATH')) {
 }
 
 define('JOUVENCE_PARA_CORE_VERSION', '0.1.0');
-define('JOUVENCE_PARA_CORE_SCHEMA_VERSION', '2');
+define('JOUVENCE_PARA_CORE_SCHEMA_VERSION', '3');
 define('JOUVENCE_PARA_CORE_FILE', __FILE__);
 define('JOUVENCE_PARA_CORE_PATH', plugin_dir_path(__FILE__));
 
@@ -71,6 +71,7 @@ add_action(
             new JouvencePara\Core\Admin\MerchandisingModule(),
             new JouvencePara\Core\Admin\StaffRolesModule(),
             new JouvencePara\Core\Audit\AuditModule(),
+            new JouvencePara\Core\Webhooks\WebhooksModule(),
             new JouvencePara\Core\Media\MediaModule(),
             new JouvencePara\Core\Inventory\InventoryModule(),
             new JouvencePara\Core\I18n\I18nModule(),
