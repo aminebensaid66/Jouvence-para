@@ -14,6 +14,11 @@ Initial event coverage includes:
 
 Every row records UTC time, actor user ID, action, object type/ID, before/after snapshots where safely available, and WordPress environment type. Product metadata is captured before WordPress mutates it so price and stock entries contain genuine previous and replacement values.
 
+JP-STOCK-003 extends stock coverage to native WooCommerce direct stock updates and
+variations, and supplies optional product-editor reasons. See
+[Inventory audit](INVENTORY_AUDIT.md) for event ownership, retry behavior and
+focused runtime verification.
+
 The schema migration verifies that WordPress created the audit table before advancing the stored schema version. A failed table creation therefore remains visible and retryable instead of silently marking the migration complete.
 
 Snapshots pass through the shared observability redactor. Callers must still avoid supplying passwords, cookies, raw card details, tokens or unnecessary customer data. Payment/shipping option changes deliberately record that a configuration changed rather than persisting potentially secret option values.

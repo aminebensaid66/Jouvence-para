@@ -33,6 +33,14 @@ final class Redactor
         $value = preg_replace('/Bearer\s+[A-Za-z0-9._~+\/-]+=*/i', 'Bearer [redacted]', $value) ?? $value;
         $value = preg_replace('/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i', '[redacted-email]', $value) ?? $value;
 
-        return substr($value, 0, 1000);
+        if (preg_match('//u', $value) !== 1) {
+            return '';
+        }
+        $bounded = substr($value, 0, 1000);
+        // Keep the existing byte budget without breaking a multibyte character in audit JSON.
+        while (preg_match('//u', $bounded) !== 1) {
+            $bounded = substr($bounded, 0, -1);
+        }
+        return $bounded;
     }
 }
