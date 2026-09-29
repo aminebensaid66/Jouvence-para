@@ -74,6 +74,7 @@ add_action(
             new JouvencePara\Core\Webhooks\WebhooksModule(),
             new JouvencePara\Core\Media\MediaModule(),
             new JouvencePara\Core\Inventory\InventoryModule(),
+            new JouvencePara\Core\Cart\CartValidationModule(),
             new JouvencePara\Core\I18n\I18nModule(),
             new JouvencePara\Core\Content\ContentReviewModule(),
             new JouvencePara\Core\Discovery\FacetedFilterModule(),

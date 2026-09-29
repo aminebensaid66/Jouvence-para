@@ -950,16 +950,16 @@ Each product/variation may have:
 
 Low-stock alerts must be available to authorized staff.
 
-## REQ-STOCK-004 — Reservation/decrement policy — P0 / TBD
+## REQ-STOCK-004 — Reservation/decrement policy — P0
 
-Before checkout implementation, define exactly:
-
-- when stock is reserved;
-- when stock is decremented;
-- when reservation expires;
-- when stock is restored.
-
-No developer may assume these rules.
+Use the business-approved native WooCommerce lifecycle in ADR-0005: checkout
+pending/draft orders reserve stock for 30 minutes, native payment-complete and
+processing/on-hold/completed transitions reduce stock once, and native restoration
+follows order/item reduction flags before parcel departure. Cart contents alone
+do not reserve stock. Preserve the one-unit safety buffer. Refused/returned parcels
+must be physically received and inspected before authorized restocking; do not
+trigger native restoration prematurely. Implementation belongs to JP-STOCK-002
+and the controlled order workflow.
 
 ## REQ-STOCK-005 — Cancellation — P0
 
