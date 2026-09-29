@@ -66,6 +66,18 @@ add_action(
     }
 );
 
+function account_link_markup(): string
+{
+    if (! function_exists('wc_get_page_id') || ! function_exists('wc_get_page_permalink')) {
+        return '';
+    }
+    $id = wc_get_page_id('myaccount');
+    if ($id < 1 || get_post_status($id) !== 'publish') {
+        return '';
+    }
+    return '<a class="jp-account-link" href="' . esc_url(wc_get_page_permalink('myaccount')) . '">' . esc_html__('Mon compte', 'jouvence-para') . '</a>';
+}
+
 function cart_link_markup(): string
 {
     if (! function_exists('wc_get_cart_url') || ! function_exists('WC')) {

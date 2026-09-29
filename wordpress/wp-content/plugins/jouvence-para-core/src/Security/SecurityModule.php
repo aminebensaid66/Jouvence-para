@@ -24,6 +24,7 @@ final class SecurityModule implements Module
             define('DISALLOW_FILE_EDIT', true);
         }
         add_action('login_form', [$this, 'renderLoginField']);
+        add_action('woocommerce_login_form', [$this, 'renderLoginField']);
         add_filter('wp_authenticate_user', [$this, 'requireTwoFactorCode'], 20, 2);
         add_filter('authenticate', [$this, 'enforceLoginThrottle'], 5, 3);
         add_action('wp_login_failed', [$this, 'recordLoginFailure'], 10, 2);
@@ -59,6 +60,7 @@ final class SecurityModule implements Module
         <p>
             <label for="jp_totp"><?php esc_html_e('Code de sécurité à 6 chiffres', 'jouvence-para-core'); ?></label>
             <input type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" name="jp_totp" id="jp_totp" class="input" value="">
+            <span><?php esc_html_e('À renseigner seulement si la double authentification est activée pour votre compte.', 'jouvence-para-core'); ?></span>
         </p>
         <?php
     }
