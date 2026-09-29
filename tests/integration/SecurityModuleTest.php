@@ -21,6 +21,7 @@ return [
         $GLOBALS['jp_test_hooks'] = [];
         (new SecurityModule())->register();
         $test->assertTrue(isset($GLOBALS['jp_test_hooks']['action']['login_form']));
+        $test->assertTrue(isset($GLOBALS['jp_test_hooks']['action']['woocommerce_login_form']));
         $test->assertTrue(isset($GLOBALS['jp_test_hooks']['filter']['wp_authenticate_user']));
         $test->assertTrue(isset($GLOBALS['jp_test_hooks']['filter']['file_mod_allowed']));
         $test->assertTrue(isset($GLOBALS['jp_test_hooks']['filter']['xmlrpc_enabled']));

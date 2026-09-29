@@ -13,6 +13,7 @@
         <a class="site-brand" href="<?php echo esc_url(home_url('/')); ?>"><?php bloginfo('name'); ?></a>
         <nav aria-label="<?php esc_attr_e('Primary navigation', 'jouvence-para'); ?>">
             <?php wp_nav_menu(['theme_location' => 'primary', 'container' => false, 'fallback_cb' => false]); ?>
+            <?php echo \JouvencePara\Theme\account_link_markup(); ?>
             <?php echo \JouvencePara\Theme\cart_link_markup(); ?>
         </nav>
     </div>
