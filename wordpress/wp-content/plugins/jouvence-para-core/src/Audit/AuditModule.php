@@ -7,6 +7,7 @@ namespace JouvencePara\Core\Audit;
 use JouvencePara\Core\Contracts\Module;
 use WP_Post;
 use WP_User;
+use WC_Product;
 
 final class AuditModule implements Module
 {
@@ -22,6 +23,9 @@ final class AuditModule implements Module
     /** @var array<string, mixed> */
     private array $pendingProductMeta = [];
 
+    /** @var array<int, int|float|null> */
+    private array $pendingStock = [];
+
     public function __construct(private readonly AuditRepository $repository = new AuditRepository())
     {
     }
@@ -31,6 +35,13 @@ final class AuditModule implements Module
         add_filter('update_post_metadata', [$this, 'postMetaUpdating'], 10, 5);
         add_action('updated_post_meta', [$this, 'postMetaUpdated'], 10, 4);
         add_action('added_post_meta', [$this, 'postMetaAdded'], 10, 4);
+        foreach (['product', 'variation'] as $type) {
+            add_action('woocommerce_' . $type . '_before_set_stock', [$this, 'stockUpdating']);
+            add_action('woocommerce_' . $type . '_set_stock', [$this, 'stockUpdated']);
+        }
+        add_action('woocommerce_after_product_object_save', [$this, 'clearUnchangedStock']);
+        add_action('woocommerce_product_options_inventory_product_data', [$this, 'renderStockReason']);
+        add_action('woocommerce_variation_options_inventory', [$this, 'renderVariationStockReason'], 10, 3);
         add_action('save_post_shop_coupon', [$this, 'couponSaved'], 10, 3);
         add_action('woocommerce_order_status_changed', [$this, 'orderStatusChanged'], 10, 4);
         add_action('woocommerce_refund_created', [$this, 'refundCreated'], 10, 2);
@@ -50,7 +61,7 @@ final class AuditModule implements Module
     ): mixed
     {
         unset($metaValue, $previousValue);
-        if (isset(self::PRODUCT_META[$metaKey]) && get_post_type($objectId) === 'product') {
+        if (isset(self::PRODUCT_META[$metaKey]) && in_array(get_post_type($objectId), ['product', 'product_variation'], true)) {
             $this->pendingProductMeta[$objectId . ':' . $metaKey] = get_post_meta($objectId, $metaKey, true);
         }
 
@@ -74,17 +85,121 @@ final class AuditModule implements Module
 
     private function recordProductMeta(int $objectId, string $metaKey, mixed $oldValue, mixed $newValue): void
     {
-        if (! isset(self::PRODUCT_META[$metaKey]) || get_post_type($objectId) !== 'product') {
+        $postType = get_post_type($objectId);
+        if (! isset(self::PRODUCT_META[$metaKey]) || ! in_array($postType, ['product', 'product_variation'], true)) {
+            return;
+        }
+
+        if ($metaKey === '_stock') {
+            // Native CRUD emits both metadata and stock hooks; the stock hook owns this event.
+            if (array_key_exists($objectId, $this->pendingStock)) {
+                return;
+            }
+            $this->recordStock($objectId, $postType === 'product_variation', self::stockValue($oldValue), self::stockValue($newValue));
             return;
         }
 
         $this->repository->record(
             self::PRODUCT_META[$metaKey],
-            'product',
+            $postType === 'product_variation' ? 'product_variation' : 'product',
             $objectId,
             ['field' => $metaKey, 'value' => self::auditValue($oldValue)],
             ['field' => $metaKey, 'value' => self::auditValue($newValue)]
         );
+    }
+
+    public function stockUpdating(WC_Product $product): void
+    {
+        // The CRUD object already contains the proposed quantity. Read the persisted previous value.
+        $this->pendingStock[$product->get_id()] = self::stockValue(get_post_meta($product->get_id(), '_stock', true));
+    }
+
+    public function stockUpdated(WC_Product $product): void
+    {
+        $id = $product->get_id();
+        if (! array_key_exists($id, $this->pendingStock)) {
+            return;
+        }
+        $oldValue = $this->pendingStock[$id];
+        unset($this->pendingStock[$id]);
+        $this->recordStock($id, $product->is_type('variation'), $oldValue, self::stockValue($product->get_stock_quantity('edit')));
+    }
+
+    public function clearUnchangedStock(WC_Product $product): void
+    {
+        $id = $product->get_id();
+        // A no-op CRUD save does not emit set_stock. Do not suppress a subsequent metadata change.
+        if (array_key_exists($id, $this->pendingStock) && self::sameStock($this->pendingStock[$id], self::stockValue($product->get_stock_quantity('edit')))) {
+            unset($this->pendingStock[$id]);
+        }
+    }
+
+    private static function stockValue(mixed $value): int|float|null
+    {
+        return is_numeric($value) ? $value + 0 : null;
+    }
+
+    private static function sameStock(int|float|null $before, int|float|null $after): bool
+    {
+        return $before === $after || ($before !== null && $after !== null && $before == $after);
+    }
+
+    private function recordStock(int $id, bool $variation, int|float|null $before, int|float|null $after): void
+    {
+        if ($id < 1 || self::sameStock($before, $after)) {
+            return;
+        }
+        $snapshot = ['field' => '_stock', 'value' => $after];
+        $reason = $this->stockReason($id);
+        if ($reason !== '') {
+            $snapshot['reason'] = $reason;
+        }
+        $this->repository->record('product_stock_changed', $variation ? 'product_variation' : 'product', $id, ['field' => '_stock', 'value' => $before], $snapshot);
+    }
+
+    private function stockReason(int $id): string
+    {
+        $reasons = $_POST['jp_stock_reason'] ?? [];
+        $nonces = $_POST['jp_stock_reason_nonce'] ?? [];
+        $reason = is_array($reasons) ? ($reasons[$id] ?? null) : null;
+        $nonce = is_array($nonces) ? ($nonces[$id] ?? null) : null;
+        if (! is_string($reason) || ! is_string($nonce) || ! current_user_can('edit_post', $id)
+            || ! current_user_can('edit_products') || ! wp_verify_nonce(wp_unslash($nonce), 'jp_stock_reason_' . $id)) {
+            return '';
+        }
+        $safeReason = AuditEvent::snapshot(sanitize_text_field(wp_unslash($reason)));
+        return preg_match('/^.{0,500}/us', $safeReason, $matches) === 1 ? $matches[0] : '';
+    }
+
+    public function renderStockReason(): void
+    {
+        global $product_object;
+        if ($product_object instanceof WC_Product) {
+            $this->renderReasonField($product_object->get_id());
+        }
+    }
+
+    public function renderVariationStockReason(int $loop, array $variationData, WP_Post $variation): void
+    {
+        unset($loop, $variationData);
+        $this->renderReasonField($variation->ID);
+    }
+
+    private function renderReasonField(int $id): void
+    {
+        if ($id < 1 || ! current_user_can('edit_post', $id) || ! current_user_can('edit_products')) {
+            return;
+        }
+        wp_nonce_field('jp_stock_reason_' . $id, 'jp_stock_reason_nonce[' . $id . ']');
+        woocommerce_wp_text_input([
+            'id' => 'jp_stock_reason_' . $id,
+            'name' => 'jp_stock_reason[' . $id . ']',
+            'label' => __('Inventory change reason (optional)', 'jouvence-para-core'),
+            'description' => __('Applies to this save only. Do not include customer data or secrets.', 'jouvence-para-core'),
+            'desc_tip' => true,
+            'value' => '',
+            'custom_attributes' => ['maxlength' => '500'],
+        ]);
     }
 
     private static function auditValue(mixed $value): mixed

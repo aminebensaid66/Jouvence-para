@@ -30,6 +30,11 @@ return [
         $test->assertSame(10.0, MetricsSummary::serverErrorRate($metrics));
         $test->assertSame(200.0, MetricsSummary::averageMs($metrics));
     },
+    'bounds redacted audit text without splitting Unicode or accepting invalid UTF-8' => static function (TestHarness $test): void {
+        $test->assertSame('a' . str_repeat('é', 499), Redactor::text('a' . str_repeat('é', 600)));
+        $test->assertSame(str_repeat('🙂', 250), Redactor::text(str_repeat('🙂', 400)));
+        $test->assertSame('', Redactor::text("\xFF"));
+    },
     'samples successful requests but always records server errors' => static function (TestHarness $test): void {
         $test->assertSame(10, DailyMetrics::sampleWeight(200, 1));
         $test->assertSame(0, DailyMetrics::sampleWeight(200, 2));
