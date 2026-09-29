@@ -76,6 +76,7 @@ add_action(
             new JouvencePara\Core\Inventory\InventoryModule(),
             new JouvencePara\Core\Cart\CartValidationModule(),
             new JouvencePara\Core\Customers\AccountModule(),
+            new JouvencePara\Core\Checkout\CheckoutModule(),
             new JouvencePara\Core\I18n\I18nModule(),
             new JouvencePara\Core\Content\ContentReviewModule(),
             new JouvencePara\Core\Discovery\FacetedFilterModule(),
