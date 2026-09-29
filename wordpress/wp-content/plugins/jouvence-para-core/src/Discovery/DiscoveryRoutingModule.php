@@ -15,7 +15,6 @@ final class DiscoveryRoutingModule implements Module
         add_filter('woocommerce_get_catalog_ordering_args', [$this, 'orderingArgs'], 20, 3);
         add_filter('woocommerce_pagination_args', [$this, 'paginationArgs']);
         add_filter('wp_robots', [$this, 'robots']);
-        add_action('wp_head', [$this, 'canonical'], 1);
     }
 
     /** @param array<string, string> $options @return array<string, string> */
@@ -56,24 +55,6 @@ final class DiscoveryRoutingModule implements Module
             $robots['follow'] = true;
         }
         return $robots;
-    }
-
-    public function canonical(): void
-    {
-        if (! $this->isProductArchive() || ! DiscoveryUrlPolicy::hasVariantState(wp_unslash($_GET))) {
-            return;
-        }
-        $url = '';
-        $object = get_queried_object();
-        if ($object instanceof \WP_Term && is_object_in_taxonomy('product', $object->taxonomy)) {
-            $termLink = get_term_link($object);
-            $url = is_string($termLink) ? $termLink : '';
-        } elseif (function_exists('wc_get_page_permalink')) {
-            $url = (string) wc_get_page_permalink('shop');
-        }
-        if ($url !== '') {
-            echo '<link rel="canonical" href="' . esc_url($url) . '">' . "\n";
-        }
     }
 
     private function isProductArchive(): bool
