@@ -61,6 +61,7 @@ add_action(
             return;
         }
 
+        $jobsModule = new JouvencePara\Core\Jobs\JobsModule();
         (new JouvencePara\Core\Bootstrap\Plugin([
             new JouvencePara\Core\Infrastructure\Database\DatabaseModule(),
             new JouvencePara\Core\Catalog\CatalogModule(),
@@ -79,6 +80,7 @@ add_action(
             new JouvencePara\Core\Geography\GeographyModule(),
             new JouvencePara\Core\Shipping\ShippingModule(),
             new JouvencePara\Core\Observability\ObservabilityModule(),
+            $jobsModule,
             new JouvencePara\Core\Privacy\ConsentModule(),
             new JouvencePara\Core\Security\SecurityModule(),
             new JouvencePara\Core\Support\WhatsAppModule(),
