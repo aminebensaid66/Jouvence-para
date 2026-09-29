@@ -6,7 +6,7 @@ namespace JouvencePara\Core\Observability;
 
 final class Redactor
 {
-    private const SENSITIVE_KEY_PATTERN = '/password|passwd|token|secret|authorization|cookie|card|nonce|session/i';
+    private const SENSITIVE_KEY_PATTERN = '/password|passwd|token|secret|authorization|cookie|card|nonce|session|cvv|cvc|cryptogram|transaction.?id|provider.?payload|provider.?response|gateway.?response|payment.?payload|payment.?record/i';
 
     public static function context(mixed $value): mixed
     {
