@@ -9,10 +9,11 @@
 <?php wp_body_open(); ?>
 <a class="screen-reader-text" href="#main-content"><?php esc_html_e('Skip to content', 'jouvence-para'); ?></a>
 <header class="site-header">
-    <div class="jp-container">
+    <div class="jp-container site-header__inner">
         <a class="site-brand" href="<?php echo esc_url(home_url('/')); ?>"><?php bloginfo('name'); ?></a>
         <nav aria-label="<?php esc_attr_e('Primary navigation', 'jouvence-para'); ?>">
             <?php wp_nav_menu(['theme_location' => 'primary', 'container' => false, 'fallback_cb' => false]); ?>
+            <?php echo \JouvencePara\Theme\cart_link_markup(); ?>
         </nav>
     </div>
 </header>

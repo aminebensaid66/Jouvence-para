@@ -1005,9 +1005,7 @@ Users must be able to:
 
 Authenticated customers must retain cart data across sessions.
 
-Anonymous-cart persistence duration: **TBD**.
-
-Login/cart-merge behavior must be explicitly tested.
+Anonymous-cart persistence and login/cart merging follow native WooCommerce session and persistent-cart behavior. Jouvence Para does not add separate guest-cart storage or override WooCommerce session expiration. The native login/cart merge behavior must be explicitly tested.
 
 ## REQ-CART-003 — Stock revalidation — P0
 
