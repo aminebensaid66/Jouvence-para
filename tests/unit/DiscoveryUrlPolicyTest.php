@@ -19,6 +19,11 @@ return [
         $test->assertTrue(DiscoveryUrlPolicy::hasVariantState(['jp_filter_brand' => ['avene']]));
         $test->assertTrue(DiscoveryUrlPolicy::hasVariantState(['orderby' => 'price']));
         $test->assertTrue(! DiscoveryUrlPolicy::hasVariantState(['orderby' => 'relevance']));
+        foreach ([['jp_filter_brand' => ''], ['min_price' => '10'], ['filter_skin' => 'dry'],
+            ['query_type_skin' => 'or'], ['orderby' => 'invalid'], ['orderby' => ['price']]] as $request) {
+            $test->assertTrue(DiscoveryUrlPolicy::hasVariantState($request));
+        }
+        $test->assertTrue(! DiscoveryUrlPolicy::hasVariantState(['paged' => '2', 'utm_source' => 'mail']));
     },
     'pagination carries only sanitized discovery state' => static function (TestHarness $test): void {
         $args = DiscoveryUrlPolicy::paginationArgs(['jp_filter_brand' => ['avene', '../../x'], 'orderby' => 'newest', 'evil' => 'x']);

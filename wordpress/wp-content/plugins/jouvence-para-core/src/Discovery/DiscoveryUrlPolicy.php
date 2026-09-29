@@ -10,13 +10,18 @@ final class DiscoveryUrlPolicy
     public static function hasVariantState(array $request): bool
     {
         foreach (array_keys(FilterState::TAXONOMIES) as $key) {
-            if (! empty($request['jp_filter_' . $key])) {
+            if (array_key_exists('jp_filter_' . $key, $request)) {
+                return true;
+            }
+        }
+        foreach (array_keys($request) as $key) {
+            if (str_starts_with((string) $key, 'filter_') || str_starts_with((string) $key, 'query_type_')
+                || in_array($key, ['min_price', 'max_price', 'rating_filter', 'stock_status', 'on_sale'], true)) {
                 return true;
             }
         }
         $requestedOrder = $request['orderby'] ?? 'relevance';
-        $orderby = SortPolicy::normalize(is_scalar($requestedOrder) ? (string) $requestedOrder : 'relevance');
-        return $orderby !== 'relevance';
+        return ! is_scalar($requestedOrder) || (string) $requestedOrder !== 'relevance';
     }
 
     /** @param array<string, mixed> $request @return array<string, mixed> */

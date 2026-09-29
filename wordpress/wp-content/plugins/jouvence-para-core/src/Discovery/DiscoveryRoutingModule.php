@@ -51,8 +51,13 @@ final class DiscoveryRoutingModule implements Module
     public function robots(array $robots): array
     {
         if ($this->isProductArchive() && DiscoveryUrlPolicy::hasVariantState(wp_unslash($_GET))) {
+            unset($robots['index']);
             $robots['noindex'] = true;
-            $robots['follow'] = true;
+            if (empty($robots['nofollow'])) {
+                $robots['follow'] = true;
+            } else {
+                unset($robots['follow']);
+            }
         }
         return $robots;
     }
