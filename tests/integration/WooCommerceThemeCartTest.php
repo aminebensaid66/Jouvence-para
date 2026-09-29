@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/theme-fixture.php';
+
 if (! class_exists('JP_Test_Cart')) {
     final class JP_Test_Cart
     {
@@ -60,12 +62,7 @@ if (! function_exists('_n')) {
 
 return [
     'header cart link uses the WooCommerce URL and current item count' => static function (TestHarness $test): void {
-        if (! defined('ABSPATH')) {
-            define('ABSPATH', __DIR__ . '/');
-        }
-
-        $GLOBALS['jp_test_hooks'] = [];
-        require_once __DIR__ . '/../../wordpress/wp-content/themes/jouvence-para/functions.php';
+        jp_test_theme_hooks();
         $GLOBALS['jp_test_woocommerce'] = (object) ['cart' => new JP_Test_Cart(2)];
         $GLOBALS['jp_test_cart_url'] = 'https://store.example/cart/?from=header&tab=cart';
 
@@ -79,11 +76,11 @@ return [
         $test->assertTrue(str_contains($markup, 'jp-cart-link__announcement" data-label-singular="%d article dans le panier" data-label-plural="%d articles dans le panier">2 articles dans le panier'));
     },
     'AJAX cart fragments refresh the header count and preserve other fragments' => static function (TestHarness $test): void {
-        $filters = $GLOBALS['jp_test_hooks']['filter'] ?? [];
+        $filters = jp_test_theme_hooks()['filter'] ?? [];
         $registrations = $filters['woocommerce_add_to_cart_fragments'] ?? [];
         $test->assertTrue($registrations !== [], 'Missing WooCommerce cart fragment filter');
 
-        $GLOBALS['jp_test_woocommerce']->cart->count = 4;
+        $GLOBALS['jp_test_woocommerce'] = (object) ['cart' => new JP_Test_Cart(4)];
         $callback = $registrations[array_key_last($registrations)][0];
         $fragments = $callback(['.existing-fragment' => '<span>keep</span>']);
 
@@ -92,7 +89,8 @@ return [
         $test->assertTrue(str_contains($fragments['a.jp-cart-link'], '>4 articles dans le panier</span>'));
     },
     'cart link is omitted when WooCommerce has not initialized its cart' => static function (TestHarness $test): void {
-        $GLOBALS['jp_test_woocommerce']->cart = null;
+        jp_test_theme_hooks();
+        $GLOBALS['jp_test_woocommerce'] = (object) ['cart' => null];
 
         $test->assertSame('', \JouvencePara\Theme\cart_link_markup());
     },

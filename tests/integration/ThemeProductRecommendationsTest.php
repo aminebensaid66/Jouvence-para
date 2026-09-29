@@ -2,16 +2,11 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/theme-fixture.php';
+
 return [
     'separates and stabilizes native WooCommerce recommendation lists' => static function (TestHarness $test): void {
-        if (! defined('ABSPATH')) {
-            define('ABSPATH', __DIR__ . '/');
-        }
-
-        $GLOBALS['jp_test_hooks'] = [];
-        require_once __DIR__ . '/../../wordpress/wp-content/themes/jouvence-para/functions.php';
-
-        $filters = $GLOBALS['jp_test_hooks']['filter'] ?? [];
+        $filters = jp_test_theme_hooks()['filter'] ?? [];
         $callbackFor = static function (string $hook) use ($filters): callable {
             $registrations = $filters[$hook] ?? [];
             if ($registrations === []) {
@@ -42,6 +37,14 @@ return [
         $test->assertSame('menu_order', $relatedArgs['orderby']);
         $test->assertSame('asc', $relatedArgs['order']);
         $test->assertSame(4, $relatedArgs['posts_per_page']);
+    },
+    'theme registrations survive unrelated global hook resets without overwriting them' => static function (TestHarness $test): void {
+        $hooks = jp_test_theme_hooks();
+        $GLOBALS['jp_test_hooks'] = ['unrelated' => ['sentinel']];
+
+        $test->assertSame($hooks, jp_test_theme_hooks());
+        $test->assertTrue(isset(jp_test_theme_hooks()['filter']['woocommerce_add_to_cart_fragments']));
+        $test->assertSame(['unrelated' => ['sentinel']], $GLOBALS['jp_test_hooks']);
     },
     'product presentation keeps WooCommerce as the product-schema owner' => static function (TestHarness $test): void {
         $template = (string) file_get_contents(__DIR__ . '/../../wordpress/wp-content/themes/jouvence-para/woocommerce/content-single-product.php');
