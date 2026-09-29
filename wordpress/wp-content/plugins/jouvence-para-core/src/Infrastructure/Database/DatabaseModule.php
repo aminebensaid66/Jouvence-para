@@ -8,11 +8,12 @@ use JouvencePara\Core\Contracts\Module;
 use JouvencePara\Core\Infrastructure\Migrations\AuditLogMigration;
 use JouvencePara\Core\Infrastructure\Migrations\BaselineMigration;
 use JouvencePara\Core\Infrastructure\Migrations\Migrator;
+use JouvencePara\Core\Infrastructure\Migrations\WebhookEventsMigration;
 
 final class DatabaseModule implements Module
 {
     public function register(): void
     {
-        (new Migrator([new BaselineMigration(), new AuditLogMigration()]))->migrate();
+        (new Migrator([new BaselineMigration(), new AuditLogMigration(), new WebhookEventsMigration()]))->migrate();
     }
 }
