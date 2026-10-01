@@ -7,7 +7,11 @@ namespace {
     {
         private array $meta;
         public function __construct(private int $id) { $this->meta = $GLOBALS['jp_account_meta'][$id] ?? []; }
-        public function get_meta(string $key): mixed { return $this->meta[$key] ?? ''; }
+        public function get_meta(string $key): mixed
+        {
+            if ($GLOBALS['jp_account_read_fail'] ?? false) { throw new RuntimeException('Customer meta read failed'); }
+            return $this->meta[$key] ?? '';
+        }
         public function update_meta_data(string $key, mixed $value): void { $this->meta[$key] = $value; }
         public function save_meta_data(): void
         {
@@ -42,6 +46,7 @@ namespace {
         $GLOBALS['jp_account_meta'] = [];
         $GLOBALS['jp_account_saves'] = 0;
         $GLOBALS['jp_account_save_fail'] = false;
+        $GLOBALS['jp_account_read_fail'] = false;
         $GLOBALS['jp_account_nonce_valid'] = true;
         $GLOBALS['jp_account_native_nonce_valid'] = true;
         $GLOBALS['jp_account_notices'] = [];
@@ -69,6 +74,7 @@ namespace JouvencePara\Core\Customers {
     function wp_verify_nonce(string $nonce, string $action): bool
     {
         if ($action === 'save_account_details') { return $nonce === 'native-valid' && $GLOBALS['jp_account_native_nonce_valid']; }
+        if (str_starts_with($action, 'jp_wishlist_')) { return $nonce === 'valid' && ($GLOBALS['jp_wishlist_nonce_valid'] ?? true); }
         return $nonce === 'valid' && $action === 'jp_account_preferences_' . $GLOBALS['jp_account_actor'] && $GLOBALS['jp_account_nonce_valid'];
     }
     function wp_nonce_field(string $action, string $name): void { $GLOBALS['jp_account_fields']['nonce'] = [$action, $name]; }
