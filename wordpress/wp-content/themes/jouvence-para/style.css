@@ -65,7 +65,7 @@ img { max-width: 100%; height: auto; }
 .jp-shop__header { max-width: 54rem; margin-block-end: var(--jp-space); }
 .jp-product-grid.products { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--jp-space); margin: 0; padding: 0; list-style: none; }
 .jp-product-grid.products::before, .jp-product-grid.products::after { display: none; }
-.jp-product-card.product { float: none; width: auto; margin: 0; }
+.woocommerce ul.products li.jp-product-card.product { float: none; width: auto; margin: 0; }
 .jp-product-card__inner { height: 100%; display: flex; flex-direction: column; overflow: hidden; border: 1px solid color-mix(in srgb, var(--jp-color-ink) 14%, transparent); border-radius: 1rem; background: var(--jp-color-surface); }
 .jp-product-card__media { display: block; background: #fff; }
 .jp-product-card__image { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: contain; }
@@ -81,6 +81,21 @@ img { max-width: 100%; height: auto; }
 .jp-button--secondary { background: transparent; color: var(--jp-color-ink); border: 1px solid currentColor; }
 @media (min-width: 42rem) { .jp-product-grid.products { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (min-width: 68rem) { .jp-product-grid.products { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* JP-A11Y-001: preserve usable controls and respect the user's motion preference site-wide. */
+.site-header nav .menu a, .site-header nav .jp-account-link { display: inline-flex; min-height: 2.75rem; align-items: center; }
+.jp-facets label, .jp-active-filters a { min-height: 2.75rem; }
+body.woocommerce .woocommerce-breadcrumb, body.woocommerce .woocommerce-breadcrumb a { color: var(--jp-color-ink); }
+.woocommerce .password-input input[type="password"] { min-height: 2.75rem; }
+.woocommerce .show-password-input { min-width: 2.75rem; min-height: 2.75rem; }
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}
 
 /* JP-PDP-001 complete product detail */
 .jp-product-detail__primary { display: grid; gap: clamp(1.5rem, 5vw, 4rem); align-items: start; }
@@ -98,7 +113,6 @@ img { max-width: 100%; height: auto; }
 .jp-product-detail__details table { width: 100%; border-collapse: collapse; }
 .jp-product-detail__details th, .jp-product-detail__details td { padding: .65rem; border-bottom: 1px solid color-mix(in srgb, var(--jp-color-ink) 14%, transparent); text-align: start; }
 @media (min-width: 52rem) { .jp-product-detail__primary { grid-template-columns: minmax(0, 1.05fr) minmax(20rem, .95fr); } }
-@media (prefers-reduced-motion: reduce) { .woocommerce-product-gallery * { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
 
 /* JP-CART-001 native WooCommerce cart presentation */
 .woocommerce-cart .woocommerce { display: grid; gap: var(--jp-space); }
