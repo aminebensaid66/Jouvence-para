@@ -90,6 +90,7 @@ add_action(
             new JouvencePara\Core\Observability\ObservabilityModule(),
             $jobsModule,
             new JouvencePara\Core\Privacy\ConsentModule(),
+            new JouvencePara\Core\Privacy\CustomerDataRightsModule(),
             new JouvencePara\Core\Analytics\AnalyticsModule(),
             new JouvencePara\Core\Security\SecurityModule(),
             new JouvencePara\Core\Support\WhatsAppModule(),
