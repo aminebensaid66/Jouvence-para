@@ -119,6 +119,17 @@ return [
         $test->assertTrue($module->processAction('remove', 7, 41));
         $test->assertSame([], $GLOBALS['jp_account_meta'][7]['_jp_wishlist_product_ids']);
     },
+    'a signed-in customer cannot read or change another owner wishlist' => static function (TestHarness $test): void {
+        jp_test_wishlist_reset();
+        $GLOBALS['jp_account_meta'][7]['_jp_wishlist_product_ids'] = [41];
+        $GLOBALS['jp_account_actor'] = 8;
+        $module = new WishlistModule();
+        $html = jp_test_seo_output([$module, 'renderWishlist']);
+        $test->assertTrue(str_contains($html, 'Votre liste est vide'));
+        $test->assertTrue(! str_contains($html, 'Crème'));
+        $test->assertTrue(! $module->processAction('remove', 7, 41));
+        $test->assertSame([41], $GLOBALS['jp_account_meta'][7]['_jp_wishlist_product_ids']);
+    },
     'metadata read failure cannot erase an existing wishlist' => static function (TestHarness $test): void {
         jp_test_wishlist_reset();
         $GLOBALS['jp_account_meta'][7]['_jp_wishlist_product_ids'] = [41, 99];
