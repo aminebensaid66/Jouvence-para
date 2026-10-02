@@ -7,12 +7,28 @@ require_once __DIR__ . '/theme-fixture.php';
 if (! class_exists('JP_Test_Cart')) {
     final class JP_Test_Cart
     {
-        public function __construct(public int $count = 0) {}
+        /** @param list<array<string, mixed>> $items */
+        public function __construct(public int $count = 0, private array $items = []) {}
 
         public function get_cart_contents_count(): int
         {
             return $this->count;
         }
+
+        /** @return list<array<string, mixed>> */
+        public function get_cart(): array
+        {
+            return $this->items;
+        }
+    }
+}
+
+if (! class_exists('JP_Test_WhatsApp_Share_Product')) {
+    final class JP_Test_WhatsApp_Share_Product extends WC_Product
+    {
+        public bool $visible = true;
+        public function is_visible(): bool { return $this->visible; }
+        public function get_permalink(): string { return 'https://store.example/product/' . $this->get_id() . '/'; }
     }
 }
 
@@ -48,6 +64,16 @@ if (! function_exists('esc_html__')) {
         unset($domain);
 
         return esc_html($text);
+    }
+}
+
+if (! function_exists('apply_filters')) {
+    function apply_filters(string $hook, mixed $value, mixed ...$args): mixed
+    {
+        if ($hook === 'jouvence_para_whatsapp_cart_share_url') {
+            return (new \JouvencePara\Core\Support\WhatsAppService())->cartUrl($args[0] ?? [], (int) ($args[1] ?? 0));
+        }
+        return $value;
     }
 }
 
@@ -101,5 +127,52 @@ return [
         $test->assertTrue(str_contains($script, 'cartData.itemsCount'));
         $test->assertTrue(str_contains($script, 'wp.data.subscribe(updateCartItemsCount)'));
         $test->assertTrue(str_contains($script, 'jp-cart-link__announcement'));
+    },
+    'classic cart share renders only a public product and keeps private cart fields out of the WhatsApp URL' => static function (TestHarness $test): void {
+        $hooks = jp_test_theme_hooks();
+        $GLOBALS['jp_account_page_status'] = 'publish';
+        $GLOBALS['jp_test_product_statuses'] = [52 => 'private'];
+        $public = new JP_Test_WhatsApp_Share_Product(['id' => 41, 'name' => 'Crème douceur', 'status' => 'publish']);
+        $hidden = new JP_Test_WhatsApp_Share_Product(['id' => 52, 'name' => 'Produit privé', 'status' => 'publish']);
+        $GLOBALS['jp_test_woocommerce'] = (object) ['cart' => new JP_Test_Cart(3, [
+            ['data' => $public, 'quantity' => 2],
+            ['data' => $hidden, 'quantity' => 1],
+        ])];
+        $callbacks = $hooks['action']['woocommerce_after_cart'] ?? [];
+        $render = $callbacks[array_key_last($callbacks)][0];
+        ob_start();
+        $render();
+        $markup = (string) ob_get_clean();
+        $test->assertTrue(str_contains($markup, 'Demander conseil sur WhatsApp'), 'Classic cart did not render the share CTA');
+        $test->assertTrue(str_contains($markup, 'renseignement personnel'), 'Privacy disclosure is missing');
+        $test->assertTrue(str_contains($markup, 'Produit privé') === false, 'Hidden product name leaked into markup');
+        $href = html_entity_decode((string) (preg_match('/href="([^"]+)"/', $markup, $match) ? $match[1] : ''), ENT_QUOTES, 'UTF-8');
+        $message = rawurldecode((string) parse_url($href, PHP_URL_QUERY));
+        $test->assertTrue(str_contains($message, '2 × Crème douceur'), 'Public cart context is missing from the WhatsApp message');
+        $test->assertTrue(str_contains($message, '1 autre(s) article(s) non inclus'), 'Omitted cart count is missing');
+        $test->assertTrue(! str_contains($message, 'Produit privé'), 'Hidden product leaked into the WhatsApp message');
+    },
+    'Cart Block share preserves block output and announces when all cart products are unavailable' => static function (TestHarness $test): void {
+        $hooks = jp_test_theme_hooks();
+        $GLOBALS['jp_account_page_status'] = 'publish';
+        $GLOBALS['jp_test_product_statuses'] = [52 => 'private'];
+        $hidden = new JP_Test_WhatsApp_Share_Product(['id' => 52, 'name' => 'Produit privé', 'status' => 'publish']);
+        $GLOBALS['jp_test_woocommerce'] = (object) ['cart' => new JP_Test_Cart(1, [['data' => $hidden, 'quantity' => 1]])];
+        $callbacks = $hooks['filter']['render_block'] ?? [];
+        $render = $callbacks[array_key_last($callbacks)][0];
+        $markup = $render('<div>WooCommerce cart</div>', ['blockName' => 'woocommerce/cart']);
+        $test->assertTrue(str_starts_with($markup, '<div>WooCommerce cart</div>'));
+        $test->assertTrue(str_contains($markup, 'role="status"'));
+        $test->assertTrue(str_contains($markup, 'Certains articles indisponibles'));
+        $test->assertTrue(! str_contains($markup, 'Produit privé'));
+        $test->assertTrue(! str_contains($markup, 'wa.me/'));
+
+        $public = new JP_Test_WhatsApp_Share_Product(['id' => 41, 'name' => 'Crème douceur', 'status' => 'publish']);
+        $GLOBALS['jp_test_woocommerce']->cart = new JP_Test_Cart(1, [['data' => $public, 'quantity' => 1]]);
+        $withProducts = $render('<div>WooCommerce cart</div>', ['blockName' => 'woocommerce/cart']);
+        $test->assertTrue(str_contains($withProducts, 'href="https://wa.me/21629302202?text='), 'Cart Block share URL is missing');
+        $href = html_entity_decode((string) (preg_match('/href="([^"]+)"/', $withProducts, $match) ? $match[1] : ''), ENT_QUOTES, 'UTF-8');
+        $message = rawurldecode((string) parse_url($href, PHP_URL_QUERY));
+        $test->assertTrue(str_contains($message, '1 × Crème douceur'), 'Cart Block product context is missing');
     },
 ];
