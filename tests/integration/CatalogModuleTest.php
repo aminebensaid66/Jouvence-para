@@ -151,7 +151,8 @@ if (! function_exists('absint')) {
 if (! function_exists('wp_verify_nonce')) {
     function wp_verify_nonce(string $nonce, string $action): int|false
     {
-        return $GLOBALS['jp_test_nonce_valid'] && $nonce === 'valid' && $action === 'woocommerce_save_data' ? 1 : false;
+        return $GLOBALS['jp_test_nonce_valid'] && $nonce === 'valid'
+            && in_array($action, ['woocommerce_save_data', 'jp_save_coupon_promotion'], true) ? 1 : false;
     }
 }
 if (! function_exists('current_user_can')) {
