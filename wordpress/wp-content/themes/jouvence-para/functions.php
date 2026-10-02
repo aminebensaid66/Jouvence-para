@@ -118,6 +118,51 @@ add_filter(
     }
 );
 
+function cart_whatsapp_share_markup(): string
+{
+    if (! function_exists('WC') || ! is_object(WC()) || ! isset(WC()->cart)
+        || ! is_callable([WC()->cart, 'get_cart'])) {
+        return '';
+    }
+    $items = [];
+    $unavailableCount = 0;
+    foreach (WC()->cart->get_cart() as $cartItem) {
+        $product = is_array($cartItem) ? ($cartItem['data'] ?? null) : null;
+        if (! $product instanceof \WC_Product || ! method_exists($product, 'get_id')
+            || ! $product->is_visible() || get_post_status((int) $product->get_id()) !== 'publish') {
+            ++$unavailableCount;
+            continue;
+        }
+        $name = method_exists($product, 'get_name') ? (string) $product->get_name() : '';
+        $url = method_exists($product, 'get_permalink') ? (string) $product->get_permalink() : '';
+        $quantity = (int) ($cartItem['quantity'] ?? 0);
+        $items[] = ['name' => $name, 'url' => $url, 'quantity' => $quantity];
+    }
+    $url = (string) apply_filters('jouvence_para_whatsapp_cart_share_url', '', $items, $unavailableCount);
+    if ($url === '') {
+        return $unavailableCount > 0
+            ? '<p class="jp-whatsapp-cart-share__unavailable" role="status">' . esc_html__('Certains articles indisponibles ne peuvent pas être partagés.', 'jouvence-para') . '</p>'
+            : '';
+    }
+
+    return '<aside class="jp-whatsapp-cart-share" aria-labelledby="jp-whatsapp-cart-share-title">'
+        . '<h2 id="jp-whatsapp-cart-share-title">' . esc_html__('Partager mon panier', 'jouvence-para') . '</h2>'
+        . '<p>' . esc_html__('Le message contient uniquement les noms, quantités et liens des produits affichés. Aucun renseignement personnel ou de commande n’est ajouté.', 'jouvence-para') . '</p>'
+        . '<a class="jp-button jp-button--secondary" href="' . esc_url($url) . '" target="_blank" rel="noopener noreferrer">' . esc_html__('Demander conseil sur WhatsApp (nouvel onglet)', 'jouvence-para') . '</a>'
+        . '<p class="jp-whatsapp-cart-share__note">' . esc_html__('Les produits masqués ou retirés sont omis. Le prix et la disponibilité restent à confirmer.', 'jouvence-para') . '</p>'
+        . '</aside>';
+}
+
+add_action('woocommerce_after_cart', static function (): void { echo cart_whatsapp_share_markup(); }, 20);
+add_filter(
+    'render_block',
+    static function (string $content, array $block): string {
+        return ($block['blockName'] ?? '') === 'woocommerce/cart' ? $content . cart_whatsapp_share_markup() : $content;
+    },
+    20,
+    2
+);
+
 add_action(
     'woocommerce_single_product_summary',
     static function (): void {

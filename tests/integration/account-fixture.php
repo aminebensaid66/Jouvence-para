@@ -86,5 +86,5 @@ namespace JouvencePara\Core\Customers {
 namespace JouvencePara\Theme {
     function wc_get_page_id(string $page): int { return $GLOBALS['jp_account_page']; }
     function wc_get_page_permalink(string $page): string { return $GLOBALS['jp_account_url'] ?? 'https://store.example/mon-compte/'; }
-    function get_post_status(int $id): string { return $GLOBALS['jp_account_page_status']; }
+    function get_post_status(int $id): string { return $GLOBALS['jp_test_product_statuses'][$id] ?? $GLOBALS['jp_account_page_status']; }
 }

@@ -18,6 +18,7 @@ final class WhatsAppModule implements Module
     public function register(): void
     {
         add_filter('jouvence_para_whatsapp_url', [$this, 'whatsAppUrl'], 10, 2);
+        add_filter('jouvence_para_whatsapp_cart_share_url', [$this, 'cartShareUrl'], 10, 3);
         add_filter('jouvence_para_whatsapp_hours', [$this, 'hours']);
         add_filter('jouvence_para_whatsapp_response_note', [$this, 'responseNote']);
         add_action('admin_init', [$this, 'settings']);
@@ -37,6 +38,13 @@ final class WhatsAppModule implements Module
     {
         unset($hours);
         return (string) get_option(self::HOURS_OPTION, 'Horaires de réponse indiqués par la boutique');
+    }
+
+    /** @param list<array{name: string, url: string, quantity: int}> $items */
+    public function cartShareUrl(string $url = '', array $items = [], int $unavailableCount = 0): string
+    {
+        unset($url);
+        return $this->service->cartUrl($items, $unavailableCount);
     }
 
     public function responseNote(string $note = ''): string
