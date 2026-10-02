@@ -75,6 +75,7 @@ add_action(
             new JouvencePara\Core\Media\MediaModule(),
             new JouvencePara\Core\Inventory\InventoryModule(),
             new JouvencePara\Core\Cart\CartValidationModule(),
+            new JouvencePara\Core\Promotions\PromotionModule(),
             new JouvencePara\Core\Customers\AccountModule(),
             new JouvencePara\Core\Customers\WishlistModule(),
             new JouvencePara\Core\Checkout\CheckoutModule(),
