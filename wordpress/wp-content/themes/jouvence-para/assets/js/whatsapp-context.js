@@ -10,12 +10,7 @@
         if (!allowsAnalytics) {
             return;
         }
-        window.dispatchEvent(new CustomEvent('jouvencepara:analytics', {
-            detail: {
-                event: 'whatsapp_click',
-                context: 'product',
-                product_id: Number(target.dataset.jpProductId || 0),
-            },
-        }));
+        const payload = { context: 'product', product_id: Number(target.dataset.jpProductId || 0) };
+        window.JouvenceParaAnalytics?.emit?.('whatsapp_click', payload);
     });
 })();
