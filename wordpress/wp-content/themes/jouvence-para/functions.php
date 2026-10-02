@@ -63,6 +63,16 @@ add_action(
                 true
             );
         }
+
+        if (function_exists('is_checkout') && is_checkout()) {
+            wp_enqueue_script(
+                'jouvence-para-accessibility',
+                get_template_directory_uri() . '/assets/js/accessibility.js',
+                [],
+                wp_get_theme()->get('Version'),
+                true
+            );
+        }
     }
 );
 
