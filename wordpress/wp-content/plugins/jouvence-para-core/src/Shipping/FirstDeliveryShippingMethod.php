@@ -50,7 +50,12 @@ final class FirstDeliveryShippingMethod extends WC_Shipping_Method
         $cost = ShippingPolicy::tnd(ShippingPolicy::deliveryFeeMilli($subtotalMilli));
         $this->add_rate([
             'id' => $this->get_rate_id(),
-            'label' => $this->title,
+            'label' => sprintf(
+                /* translators: 1: shipping method name, 2: estimated working days. */
+                __('%1$s — %2$d jours ouvrés', 'jouvence-para-core'),
+                $this->title,
+                ShippingPolicy::WORKING_DAYS
+            ),
             'cost' => $cost,
             'package' => $package,
         ]);
