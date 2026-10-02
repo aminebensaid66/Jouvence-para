@@ -1,4 +1,4 @@
-.PHONY: check lint-php check-style check-json check-secrets test-unit test-integration test-e2e test-fast compose-config build verify-build
+.PHONY: check lint-php check-style check-json check-secrets test-unit test-integration test-analytics-js test-e2e test-fast compose-config build verify-build
 
 check: lint-php check-style check-json check-secrets test-unit test-integration
 
@@ -17,8 +17,11 @@ check-secrets:
 test-unit:
 	@php tests/run.php unit
 
-test-integration:
+test-integration: test-analytics-js
 	@php tests/run.php integration
+
+test-analytics-js:
+	@node --test tests/integration/analytics-runtime.test.js
 
 test-e2e:
 	@php tests/e2e/smoke.php

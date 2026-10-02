@@ -16,7 +16,7 @@ $brand = is_array($brands) && isset($brands[0]) ? $brands[0]->name : '';
 $available = $product->is_in_stock();
 $quickAdd = $product->is_type('simple') && $product->is_purchasable() && $available && $product->get_price() !== '';
 ?>
-<li <?php wc_product_class('jp-product-card', $product); ?>>
+<li <?php wc_product_class('jp-product-card', $product); ?> data-jp-product-id="<?php echo esc_attr((string) $productId); ?>">
     <article class="jp-product-card__inner" aria-labelledby="jp-product-<?php echo esc_attr((string) $productId); ?>-title">
         <a class="jp-product-card__media" href="<?php echo esc_url($permalink); ?>" tabindex="-1" aria-hidden="true">
             <?php
